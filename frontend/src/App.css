@@ -596,12 +596,28 @@ video {
   margin-right: 10px;
 }
 
+.ml-\[40px\] {
+  margin-left: 40px;
+}
+
 .flex {
   display: flex;
 }
 
+.w-\[200px\] {
+  width: 200px;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
 .items-center {
   align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
 }
 
 .justify-between {
@@ -612,12 +628,48 @@ video {
   gap: 16px;
 }
 
+.gap-\[12px\] {
+  gap: 12px;
+}
+
 .whitespace-nowrap {
   white-space: nowrap;
 }
 
+.p-\[15\.5px\] {
+  padding: 15.5px;
+}
+
 .pt-\[44\.5px\] {
   padding-top: 44.5px;
+}
+
+.pb-\[39px\] {
+  padding-bottom: 39px;
+}
+
+.pt-\[15\.5px\] {
+  padding-top: 15.5px;
+}
+
+.pb-\[15\.5px\] {
+  padding-bottom: 15.5px;
+}
+
+.pl-\[15\.5px\] {
+  padding-left: 15.5px;
+}
+
+.pl-\[19px\] {
+  padding-left: 19px;
+}
+
+.pl-\[34px\] {
+  padding-left: 34px;
+}
+
+.pr-\[34px\] {
+  padding-right: 34px;
 }
 
 .font-aeroport {
@@ -632,6 +684,10 @@ video {
   font-size: 16px;
 }
 
+.text-\[20px\] {
+  font-size: 20px;
+}
+
 .font-bold {
   font-weight: 700;
 }
@@ -642,6 +698,11 @@ video {
 
 .uppercase {
   text-transform: uppercase;
+}
+
+.text-black {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
 }
 
 body {
