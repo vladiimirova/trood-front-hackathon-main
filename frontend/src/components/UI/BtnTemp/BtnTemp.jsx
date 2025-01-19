@@ -16,7 +16,7 @@ function BtnTemp({ className, to, text, onClick }) {
       onClick={onClickHendler}
       className={twMerge(
         cx(
-          'font-aeroport font-medium font-normal text-[20px] text-black rounded-[24px] w-[186px] h-[47px] inline-flex items-center justify-center text-center bg-gray'
+          'font-aeroport font-medium font-500 text-[20px] text-black rounded-[24px] w-[186px] h-[47px] inline-flex items-center justify-center text-center bg-gray'
         ),
         className
       )}

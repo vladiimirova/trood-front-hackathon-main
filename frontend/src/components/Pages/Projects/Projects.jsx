@@ -3,7 +3,7 @@ import PassedProjects from './ProjectsComp/PassedProjects/PassedProjects';
 
 function Projects() {
   return (
-    <div className="">
+    <div>
       <ActiveProjects />
       <PassedProjects />
     </div>

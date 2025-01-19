@@ -118,7 +118,7 @@ function CreateForm() {
         <div>
           <button
             type="submit"
-            className="font-aeroport font-medium text-[20px] text-black rounded-[24px] w-[186px] h-[47px] inline-flex items-center justify-center text-center bg-gray"
+            className="font-aeroport font-500 text-[20px] text-black rounded-[24px] w-[186px] h-[47px] inline-flex items-center justify-center text-center bg-gray"
           >
             Create project
           </button>

@@ -1037,6 +1037,10 @@ video {
   font-weight: 400;
 }
 
+.font-900 {
+  font-weight: 900;
+}
+
 .uppercase {
   text-transform: uppercase;
 }

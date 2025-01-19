@@ -1,10 +1,10 @@
 function Creating() {
   return (
     <div className="bg-white w-[508px] min-h-[325px] rounded-[24px] pt-[32px] pl-[34px] pb-[17px] font-aeroport">
-      <p className="font-normal text-[24px] mb-[23px] mr-[94px]">
+      <p className="font-500 text-[24px] mb-[23px] mr-[94px]">
         Creating visual materials for social media
       </p>
-      <ul className="font-light text-[16px] flex flex-col gap-[15px]">
+      <ul className="font-400 text-[16px] flex flex-col gap-[15px]">
         <li className="flex gap-[15px]">
           <div className="w-[4px] h-[25px] bg-[#E8EBEA]"></div>
           <p>Finished creating visual for Facebook </p>
