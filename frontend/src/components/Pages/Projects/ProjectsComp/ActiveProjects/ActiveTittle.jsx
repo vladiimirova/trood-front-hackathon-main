@@ -6,7 +6,7 @@ function ActiveTittle() {
         <h1 className="font-aeroport font-medium text-[32px]">
           Active projects
         </h1>
-        <BtnTemp to={'/'} text={'Create project'} />
+        <BtnTemp to={'/create'} text={'Create project'} />
       </div>
   );
 }
