@@ -5,6 +5,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        custom: 'var(--100, #F3F4F6)',
+        gray: '#D1D2D6',
+        'gray-text': '#9D9D9D'
+      },
       fontFamily: {
         aeroport: ['Aeroport', 'sans-serif'], // Додаємо Aeroport
       },

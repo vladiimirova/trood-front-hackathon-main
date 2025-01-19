@@ -1,7 +1,9 @@
+import ActiveProjects from './ProjectsComp/ActiveProjects/ActiveProjects';
+
 function Projects() {
   return (
-    <div>
-111
+    <div className="">
+      <ActiveProjects />
     </div>
   );
 }

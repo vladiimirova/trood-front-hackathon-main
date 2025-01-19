@@ -9,10 +9,12 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <div className="container m-0 mx-auto flex justify-between">
+      <div className="flex h-screen">
         <Router>
           <Sidebar />
-          <RouterComp />
+          <div className="flex-1 bg-custom pt-[61px] pr-[54px] pl-[66px] rounded-tl-[16px]">
+            <RouterComp />
+          </div>
         </Router>
       </div>
     </div>
