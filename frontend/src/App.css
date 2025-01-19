@@ -620,6 +620,14 @@ video {
   margin-top: 50px;
 }
 
+.mb-\[150px\] {
+  margin-bottom: 150px;
+}
+
+.mt-\[40px\] {
+  margin-top: 40px;
+}
+
 .flex {
   display: flex;
 }
@@ -781,6 +789,10 @@ video {
 
 .pt-\[61px\] {
   padding-top: 61px;
+}
+
+.pb-\[32px\] {
+  padding-bottom: 32px;
 }
 
 .text-center {

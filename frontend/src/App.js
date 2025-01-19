@@ -9,7 +9,7 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <div className="flex h-screen">
+      <div className="flex ">
         <Router>
           <Sidebar />
           <div className="flex-1 bg-custom pt-[61px] pr-[54px] pl-[66px] rounded-tl-[16px]">
