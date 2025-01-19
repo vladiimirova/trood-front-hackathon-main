@@ -23,21 +23,7 @@ export const schemaCreate = z.object({
     .nonempty('Оберіть дату')
     .refine((date) => !isNaN(Date.parse(date)), {
       message: 'Неправильний формат дати',
-    })
-    .refine(
-      (date) => {
-        const selectedDate = new Date(date); 
-        const today = new Date(); 
-        today.setHours(0, 0, 0, 0); 
-        const minimumDate = new Date(today);
-        minimumDate.setDate(today.getDate() + 1); 
-        return selectedDate >= minimumDate;
-      },
-      {
-        message:
-          'Дата повинна бути мінімум на 1 день пізніше від сьогоднішньої',
-      }
-    ),
+    }),
     
   description: z
     .string()
