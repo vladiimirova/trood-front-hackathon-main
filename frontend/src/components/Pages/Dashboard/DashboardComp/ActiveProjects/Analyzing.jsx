@@ -10,27 +10,22 @@ function Analyzing() {
           <p>Finished creating visual for Facebook </p>
         </li>
         <li className="flex gap-[15px]">
-          {' '}
           <div className="w-[4px] h-[25px] bg-[#E8EBEA]"></div>
           <p>Finished creating visual for Facebook </p>
         </li>
         <li className="flex gap-[15px]">
-          {' '}
           <div className="w-[4px] h-[25px] bg-[#E8EBEA]"></div>
           <p>Finished creating visual for Facebook </p>
         </li>
         <li className="flex gap-[15px]">
-          {' '}
           <div className="w-[4px] h-[25px] bg-[#E8EBEA]"></div>
           <p>Finished creating visual for Facebook </p>
         </li>
         <li className="flex gap-[15px]">
-          {' '}
           <div className="w-[4px] h-[25px] bg-[#E8EBEA]"></div>
           <p>Finished creating visual for Facebook </p>
         </li>
         <li className="flex gap-[15px]">
-          {' '}
           <div className="w-[4px] h-[25px] bg-[#E8EBEA]"></div>
           <p>Finished creating visual for Facebook </p>
         </li>

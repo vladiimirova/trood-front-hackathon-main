@@ -1,13 +1,34 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom'; 
 import useStore from '../../Store/Store';
-import { schemaCreate } from '../CreateProjects/CreateComp/CreateValidation';
 import BtnTemp from '../../UI/BtnTemp/BtnTemp';
+import { schemaCreate } from '../CreateProjects/CreateComp/CreateValidation';
 
 function ReadyProject() {
-  const project = useStore((state) => state.project);
+  const { projectId } = useParams(); 
+  const project = useStore((state) =>
+    state.activeProjects.find((p) => p.id === parseInt(projectId)) ||
+    state.completedProjects.find((p) => p.id === parseInt(projectId))
+  );
   const updateProject = useStore((state) => state.updateProject);
+  const { removeProject } = useStore();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!project) {
+      navigate('/'); 
+    }
+  }, [project, navigate]);
+
+
+  function handleDelete(projectId) {
+    removeProject(projectId); 
+    navigate('/'); 
+  }
+
+  if (!project) {
+    return <div>Loading...</div>;
+  }
 
   function handleEdit(field, value) {
     const updatedProject = { ...project, [field]: value };
@@ -24,23 +45,16 @@ function ReadyProject() {
       }
     }
 
-    updateProject({ [field]: value });
-  }
-
-  if (!project) {
-    return (
-      <div>
-        Проєкт не знайдено. Повернутись на{' '}
-        <button onClick={() => navigate('/')}>головну</button>.
-      </div>
-    );
+    updateProject(updatedProject);
+    localStorage.setItem('activeProjects', JSON.stringify(useStore.getState().activeProjects));
+    localStorage.setItem('completedProjects', JSON.stringify(useStore.getState().completedProjects));
   }
 
   return (
     <div>
-      <div className="flex justify-between mb-[32px] font-aeroport ">
+      <div className="flex justify-between mb-[32px] font-aeroport">
         <h1 className="font-500 text-[32px]">{project.name}</h1>
-       <BtnTemp text={'Delete'}/>
+        <BtnTemp text={'Delete'} onClick={() => handleDelete(project.id)} />
       </div>
 
       <div className="bg-white rounded-t-[24px] pt-[55px] pb-[215px] pr-[77px] pl-[59px] font-400 text-[18px]">
@@ -82,6 +96,7 @@ function ReadyProject() {
             className="p-2 rounded-[8px] border-2 border-solid border-gray-border block min-h-[162px] w-full"
           />
         </div>
+
         <BtnTemp text={'Add vacancy'}/>
       </div>
     </div>

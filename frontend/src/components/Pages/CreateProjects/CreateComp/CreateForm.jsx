@@ -3,35 +3,54 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { schemaCreate } from './CreateValidation';
 import { useNavigate } from 'react-router-dom';
-import useStore from '../../../Store/Store';
+import useStore from '../../../Store/Store'; // Импортируем Zustand store
 
 function CreateForm() {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(schemaCreate),
   });
 
+  const { addProject } = useStore(); // Получаем addProject из Zustand store
   const navigate = useNavigate();
-  const setProject = useStore(function (state) {
-    return state.setProject;
-  });
 
   function onSubmit(data) {
     if (Object.keys(errors).length > 0) {
-      console.log('There are validation errors, the form will not be submitted.');
+      console.log(
+        'There are validation errors, the form will not be submitted.'
+      );
       alert('Please correct the errors in the form.');
       return;
     }
-
-    setProject(data); 
-    navigate('/project'); 
+  
+    const newProject = {
+      id: data.id || Date.now(), // Если id передано, используем его, если нет - генерируем новый
+      name: data.name,
+      field: data.field,
+      experience: data.experience,
+      deadline: data.deadline,
+      description: data.description,
+    };
+  
+    addProject(newProject); // Добавляємо проект до store
+    navigate(`/project/${newProject.id}`); // Переходимо на сторінку проекту після створення або редагування
   }
-
+  
+  
   return (
     <div className="bg-white rounded-t-[24px] pt-[55px] pb-[215px] pr-[77px] pl-[59px]">
-      <form onSubmit={handleSubmit(onSubmit)} className="font-aeroport font-400 text-[18px]">
-        <div className="flex justify-between gap-[37px] mb-[20px] font-aeroport font-400 text-[18px]">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="font-aeroport font-400 text-[18px]"
+      >
+        <div className="flex justify-between gap-[37px] mb-[20px]">
           <div>
-            <label htmlFor="name" className="mb-[10px]">Name</label>
+            <label htmlFor="name" className="mb-[10px]">
+              Name
+            </label>
             <input
               id="name"
               type="text"
@@ -44,7 +63,9 @@ function CreateForm() {
           </div>
 
           <div className="relative">
-            <label htmlFor="field" className="mb-[10px]">Field</label>
+            <label htmlFor="field" className="mb-[10px]">
+              Field
+            </label>
             <select
               id="field"
               {...register('field')}
@@ -63,7 +84,9 @@ function CreateForm() {
 
         <div className="flex justify-between gap-[37px] mb-[28px]">
           <div>
-            <label htmlFor="experience" className="mb-[10px]">Experience</label>
+            <label htmlFor="experience" className="mb-[10px]">
+              Experience
+            </label>
             <input
               id="experience"
               type="text"
@@ -71,12 +94,16 @@ function CreateForm() {
               className="p-2 rounded-[8px] border-2 border-solid border-gray-border block w-[424px] h-[61px]"
             />
             {errors.experience && (
-              <p className="text-red-500 text-sm">{errors.experience.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.experience.message}
+              </p>
             )}
           </div>
 
           <div>
-            <label htmlFor="deadline" className="mb-[10px]">Deadline</label>
+            <label htmlFor="deadline" className="mb-[10px]">
+              Deadline
+            </label>
             <input
               id="deadline"
               type="text"
@@ -90,7 +117,9 @@ function CreateForm() {
         </div>
 
         <div className="mb-[35px]">
-          <label htmlFor="description" className="mb-[10px]">Description</label>
+          <label htmlFor="description" className="mb-[10px]">
+            Description
+          </label>
           <textarea
             id="description"
             {...register('description')}
@@ -113,5 +142,4 @@ function CreateForm() {
     </div>
   );
 }
-
 export default CreateForm;
