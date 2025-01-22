@@ -25,7 +25,7 @@ function CreateForm() {
       alert('Please correct the errors in the form.');
       return;
     }
-  
+
     const newProject = {
       id: data.id || Date.now(), // Если id передано, используем его, если нет - генерируем новый
       name: data.name,
@@ -34,19 +34,18 @@ function CreateForm() {
       deadline: data.deadline,
       description: data.description,
     };
-  
+
     addProject(newProject); // Добавляємо проект до store
     navigate(`/project/${newProject.id}`); // Переходимо на сторінку проекту після створення або редагування
   }
-  
-  
+
   return (
     <div className="bg-white rounded-t-[24px] pt-[55px] pb-[215px] pr-[77px] pl-[59px]">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="font-aeroport font-400 text-[18px]"
       >
-        <div className="flex justify-between gap-[37px] mb-[20px]">
+        <div className="flex justify-between gap-[37px]">
           <div>
             <label htmlFor="name" className="mb-[10px]">
               Name
@@ -57,9 +56,11 @@ function CreateForm() {
               {...register('name')}
               className="p-2 rounded-[8px] border-2 border-solid border-gray-border block w-[424px] h-[61px]"
             />
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message}</p>
-            )}
+            <div className="h-[20px]">
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              )}
+            </div>
           </div>
 
           <div className="relative">
@@ -76,13 +77,22 @@ function CreateForm() {
               <option value="Development">Development</option>
               <option value="Marketing">Marketing</option>
             </select>
-            {errors.field && (
-              <p className="text-red-500 text-sm">{errors.field.message}</p>
-            )}
+            <span className="absolute right-[15px] top-[55px] transform -translate-y-1/2 pointer-events-none">
+              <img
+                src="./icons/ep_arrow-up-bold.svg"
+                alt="arrow"
+                className="w-[20px] h-[20px]"
+              />
+            </span>
+            <div className="h-[20px]">
+              {errors.field && (
+                <p className="text-red-500 text-sm">{errors.field.message}</p>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-between gap-[37px] mb-[28px]">
+        <div className="flex justify-between gap-[37px] mb-[8px]">
           <div>
             <label htmlFor="experience" className="mb-[10px]">
               Experience
@@ -93,11 +103,13 @@ function CreateForm() {
               {...register('experience')}
               className="p-2 rounded-[8px] border-2 border-solid border-gray-border block w-[424px] h-[61px]"
             />
-            {errors.experience && (
-              <p className="text-red-500 text-sm">
-                {errors.experience.message}
-              </p>
-            )}
+            <div className="h-[20px]">
+              {errors.experience && (
+                <p className="text-red-500 text-sm">
+                  {errors.experience.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <div>
@@ -110,13 +122,17 @@ function CreateForm() {
               {...register('deadline')}
               className="p-2 rounded-[8px] border-2 border-solid border-gray-border block w-[424px] h-[61px]"
             />
-            {errors.deadline && (
-              <p className="text-red-500 text-sm">{errors.deadline.message}</p>
-            )}
+            <div className="h-[20px]">
+              {errors.deadline && (
+                <p className="text-red-500 text-sm">
+                  {errors.deadline.message}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="mb-[35px]">
+        <div className="mb-[15px]">
           <label htmlFor="description" className="mb-[10px]">
             Description
           </label>
@@ -125,9 +141,13 @@ function CreateForm() {
             {...register('description')}
             className="p-2 rounded-[8px] w-full border-2 border-solid border-gray-border min-h-[162px]"
           />
-          {errors.description && (
-            <p className="text-red-500 text-sm">{errors.description.message}</p>
-          )}
+          <div className="h-[20px]">
+            {errors.description && (
+              <p className="text-red-500 text-sm">
+                {errors.description.message}
+              </p>
+            )}
+          </div>
         </div>
 
         <div>
