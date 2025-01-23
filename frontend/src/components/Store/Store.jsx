@@ -1,94 +1,185 @@
 import { create } from 'zustand';
 
+const API_URL = 'http://localhost:8081/http://localhost:8080'; 
+
 const useStore = create((set) => ({
-  activeProjects: JSON.parse(localStorage.getItem('activeProjects')) || [
-    { id: 1, name: 'Creating' },
-    { id: 2, name: 'Analyzing' },
-  ],
-  completedProjects: JSON.parse(localStorage.getItem('completedProjects')) || [
-    { id: 3, name: 'PassedComp' },
-  ],
+  activeProjects: [],
+  completedProjects: [],
 
-  setActiveProjects: (projects) => set(() => ({ activeProjects: projects })),
-  setCompletedProjects: (projects) => set(() => ({ completedProjects: projects })),
-  
-  addProject: (project) => set((state) => {
-    const today = new Date();
-    today.setDate(today.getDate() - 1);
-    const projectDeadline = new Date(project.deadline);
+  savedFields: {},
 
-    let newActiveProjects = [...state.activeProjects];
-    let newCompletedProjects = [...state.completedProjects];
-    
-    if (projectDeadline <= today) {  
-      newCompletedProjects = [...newCompletedProjects, project];
-    } else {
-      newActiveProjects = [...newActiveProjects, project];
-    }
-  
-    localStorage.setItem('activeProjects', JSON.stringify(newActiveProjects));
-    localStorage.setItem('completedProjects', JSON.stringify(newCompletedProjects));
-    
-    return { 
-      activeProjects: newActiveProjects, 
-      completedProjects: newCompletedProjects 
-    };
-  }),
-  
-
-  completeProject: (projectId) => set((state) => {
-    const projectToComplete = state.activeProjects.find((p) => p.id === projectId);
-    if (!projectToComplete) return state;
-
-    const today = new Date();
-    today.setDate(today.getDate() - 1); 
-    const projectDeadline = new Date(projectToComplete.deadline);
-
-    if (projectDeadline <= today) {  
-      const newCompletedProjects = [...state.completedProjects, projectToComplete];
-      const newActiveProjects = state.activeProjects.filter((p) => p.id !== projectId);
-
-      localStorage.setItem('activeProjects', JSON.stringify(newActiveProjects));
-      localStorage.setItem('completedProjects', JSON.stringify(newCompletedProjects));
-
-      return { activeProjects: newActiveProjects, completedProjects: newCompletedProjects };
-    }
-
-    return state; 
-  }),
-
-  updateProject: (updatedProject) => set((state) => {
-    const today = new Date();
-    today.setDate(today.getDate() - 1); 
-    const projectDeadline = new Date(updatedProject.deadline);
-    const isActive = state.activeProjects.some(p => p.id === updatedProject.id);
-
-    if (isActive) {
-      if (projectDeadline <= today) {  
-        const updatedActiveProjects = state.activeProjects.filter(p => p.id !== updatedProject.id);
-        const updatedCompletedProjects = [...state.completedProjects, updatedProject];
-        localStorage.setItem('activeProjects', JSON.stringify(updatedActiveProjects));
-        localStorage.setItem('completedProjects', JSON.stringify(updatedCompletedProjects));
-        return { activeProjects: updatedActiveProjects, completedProjects: updatedCompletedProjects };
+  fetchProjects: async () => {
+    try {
+      const response = await fetch(`${API_URL}/projects`);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch projects: ${response.statusText}`);
       }
 
-      const updatedActiveProjects = state.activeProjects.map(p =>
-        p.id === updatedProject.id ? updatedProject : p
-      );
-      return { activeProjects: updatedActiveProjects };
-    } else {
-      const updatedCompletedProjects = state.completedProjects.map(p =>
-        p.id === updatedProject.id ? updatedProject : p
-      );
-      return { completedProjects: updatedCompletedProjects };
-    }
-  }),
+      const allProjects = await response.json();
+      console.log('All Projects:', allProjects); 
 
-  removeProject: (projectId) => set((state) => {
-    const updatedActiveProjects = state.activeProjects.filter(p => p.id !== projectId);
-    const updatedCompletedProjects = state.completedProjects.filter(p => p.id !== projectId);
-    return { activeProjects: updatedActiveProjects, completedProjects: updatedCompletedProjects };
-  }),
+      const today = new Date();
+      today.setDate(today.getDate() - 1); 
+      console.log('Today:', today);
+
+      const parseDate = (dateString) => {
+        const [day, month, year] = dateString.split('.');
+        return new Date(`${year}-${month}-${day}`);
+      };
+
+      const activeProjects = allProjects.filter(
+        (project) => parseDate(project.deadline) > today
+      );
+
+      const completedProjects = allProjects.filter(
+        (project) => parseDate(project.deadline) <= today
+      );
+
+      console.log('Active Projects:', activeProjects); 
+      console.log('Completed Projects:', completedProjects); 
+
+      const savedFields = {};
+      allProjects.forEach((project) => {
+        const field = localStorage.getItem(`field-${project.id}`);
+        if (field) {
+          savedFields[project.id] = field;
+        }
+      });
+        set({ activeProjects, completedProjects, savedFields });
+    } catch (error) {
+      console.error('Error fetching projects:', error);
+    }
+  },
+
+  addProject: async (project) => {
+    try {
+      const response = await fetch(`${API_URL}/projects`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...project,
+          field: localStorage.getItem('projectField'),
+        }),
+      });
+  
+      if (response.ok) {
+        const newProject = await response.json();
+  
+        if (!newProject || !newProject.id) {
+          throw new Error('Project ID is missing');
+        }
+  
+        const today = new Date();
+        today.setDate(today.getDate() - 1); 
+        const isCompleted = new Date(newProject.deadline) <= today;
+  
+        set((state) => ({
+          activeProjects: isCompleted
+            ? state.activeProjects
+            : [...state.activeProjects, newProject], 
+          completedProjects: isCompleted
+            ? [...state.completedProjects, newProject]  
+            : state.completedProjects,
+            savedFields: {
+              ...state.savedFields,
+              [newProject.id]: localStorage.getItem('projectField') || '', 
+            },
+        }));
+  
+        return newProject;
+      } else {
+        throw new Error('Failed to add project');
+      }
+    } catch (error) {
+      console.error('Error adding project:', error);
+      alert('Error while adding the project: ' + error.message);  
+      throw error; 
+    }
+  },
+  
+
+  updateProject: async (updatedProject) => {
+    console.log('Updating project with data:', updatedProject);
+    try {
+      const response = await fetch(`${API_URL}/projects/${updatedProject.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...updatedProject,
+          field: localStorage.getItem('projectField'),
+        }),
+      });
+  
+      if (response.ok) {
+        const updatedData = await response.json();
+        console.log("Updated data from server:", updatedData);
+  
+        const today = new Date();
+        today.setDate(today.getDate() - 1);
+        const isCompleted = new Date(updatedData.deadline) <= today;
+  
+        set((state) => ({
+          activeProjects: isCompleted
+            ? state.activeProjects.filter((p) => p.id !== updatedData.id)
+            : state.activeProjects.map((p) =>
+                p.id === updatedData.id ? updatedData : p
+              ),
+          completedProjects: isCompleted
+            ? state.completedProjects.map((p) =>
+                p.id === updatedData.id ? updatedData : p
+              )
+            : state.completedProjects.filter((p) => p.id !== updatedData.id),
+            savedFields: {
+              ...state.savedFields,
+              [updatedData.id]: localStorage.getItem('projectField') || '', 
+            },
+        }));
+      } else {
+        console.error('Failed to update project', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error updating project:', error);
+    }
+  },
+
+  setField: (field, projectId) => {
+    localStorage.setItem('projectField', field);
+    set((state) => ({
+      savedFields: {
+        ...state.savedFields,
+        [projectId]: field, 
+      },
+    }));
+  },
+
+  removeProject: async (projectId) => {
+    try {
+      const response = await fetch(`${API_URL}/projects/${projectId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        set((state) => ({
+          activeProjects: state.activeProjects.filter(
+            (p) => p.id !== projectId
+          ),
+          completedProjects: state.completedProjects.filter(
+            (p) => p.id !== projectId
+          ),
+          savedFields: {
+            ...state.savedFields,
+            [projectId]: undefined, 
+          },
+        }));
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+    }
+  },
 }));
 
 export default useStore;

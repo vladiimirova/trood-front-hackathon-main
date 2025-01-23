@@ -1,37 +1,18 @@
 import React, { useEffect } from 'react';
 import useStore from '../../Store/Store';
 import BtnTemp from '../../UI/BtnTemp/BtnTemp';
-import Creating from './DashboardComp/ActiveProjects/Creating'; 
-import Analyzing from './DashboardComp/ActiveProjects/Analyzing'; 
-import PassedComp from './DashboardComp/PassedProjects/PassedComp'; 
-import ProjectCard from './DashboardComp/ProjectCard/ProjectCard'; 
-
-const projectComponents = {
-  Creating: <Creating />,
-  Analyzing: <Analyzing />,
-  PassedComp: <PassedComp />,
-};
+import Creating from './DashboardComp/ActiveProjects/Creating';
+import Analyzing from './DashboardComp/ActiveProjects/Analyzing';
+import PassedComp from './DashboardComp/PassedProjects/PassedComp';
+import ProjectCard from './DashboardComp/ProjectCard/ProjectCard';
 
 function Dashboard() {
-  const { activeProjects, completedProjects, setActiveProjects, setCompletedProjects } = useStore();
+  const { activeProjects, completedProjects, fetchProjects } = useStore();
 
   useEffect(() => {
-    const storedActiveProjects = JSON.parse(localStorage.getItem('activeProjects')) || [
-      { id: 1, name: 'Creating' },
-      { id: 2, name: 'Analyzing' },
-    ];
-    const storedCompletedProjects = JSON.parse(localStorage.getItem('completedProjects')) || [
-      { id: 3, name: 'PassedComp' },
-    ];
-
-    setActiveProjects(storedActiveProjects);
-    setCompletedProjects(storedCompletedProjects);
-  }, [setActiveProjects, setCompletedProjects]);
-
-  useEffect(() => {
-    localStorage.setItem('activeProjects', JSON.stringify(activeProjects));
-    localStorage.setItem('completedProjects', JSON.stringify(completedProjects));
-  }, [activeProjects, completedProjects]);
+    fetchProjects();
+  }, [fetchProjects]);
+  const savedField = useStore((state) => state.savedField);
 
   return (
     <div>
@@ -41,29 +22,28 @@ function Dashboard() {
       </div>
 
       <div className="flex flex-wrap gap-[30px] justify-between">
-        {activeProjects.length === 0 ? (
-          <p>No active projects</p>
-        ) : (
+        <Creating />
+        <Analyzing />
+        {activeProjects.length > 0 &&
           activeProjects.map((project) => (
             <div key={project.id}>
-              {projectComponents[project.name] || <ProjectCard project={project} />}
+              <ProjectCard project={project} />
             </div>
-          ))
-        )}
+          ))}
       </div>
 
       <div className="mt-[40px] mb-[150px]">
-        <h1 className="font-aeroport font-500 text-[32px] mb-[32px]">Passed projects</h1>
+        <h1 className="font-aeroport font-500 text-[32px] mb-[32px]">
+          Passed projects
+        </h1>
         <div className="flex flex-wrap gap-[30px] justify-between">
-          {completedProjects.length === 0 ? (
-            <p>No completed projects</p>
-          ) : (
+          <PassedComp />
+          {completedProjects.length > 0 &&
             completedProjects.map((project) => (
               <div key={project.id}>
-                {projectComponents[project.name] || <ProjectCard project={project} />}
+                <ProjectCard project={project}/>
               </div>
-            ))
-          )}
+            ))}
         </div>
       </div>
     </div>

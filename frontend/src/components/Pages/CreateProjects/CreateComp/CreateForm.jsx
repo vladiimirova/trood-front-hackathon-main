@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { schemaCreate } from './CreateValidation';
@@ -9,13 +9,22 @@ function CreateForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
+    watch, 
   } = useForm({
     resolver: zodResolver(schemaCreate),
   });
 
-  const { addProject } = useStore(); 
+  const { addProject, savedField } = useStore();
   const navigate = useNavigate();
+  const fieldValue = watch('field'); 
+
+  useEffect(() => {
+    if (savedField) {
+      setValue('field', savedField);
+    }
+  }, [savedField, setValue]);
 
   function onSubmit(data) {
     if (Object.keys(errors).length > 0) {
@@ -23,20 +32,27 @@ function CreateForm() {
       alert('Please correct the errors in the form.');
       return;
     }
-  
+
     const newProject = {
-      id: data.id || Date.now(),
       name: data.name,
-      field: data.field,
+      field: fieldValue, 
       experience: data.experience,
       deadline: data.deadline,
       description: data.description,
     };
-    
-    addProject(newProject);
-  
-    navigate(`/project/${newProject.id}`);
-  }
+
+    addProject(newProject)
+    .then((newProjectFromServer) => {
+      const projectId = newProjectFromServer.id; 
+
+      localStorage.setItem(`field-${projectId}`, fieldValue);  
+
+      navigate(`/project/${projectId}`);
+    })
+    .catch((error) => {
+      console.error('Error adding project:', error);
+    });
+};
 
   return (
     <div className="bg-white rounded-t-[24px] pt-[55px] pb-[215px] pr-[77px] pl-[59px]">
@@ -68,7 +84,7 @@ function CreateForm() {
               <option value="Marketing">Marketing</option>
             </select>
             <span className="absolute right-[15px] top-[55px] transform -translate-y-1/2 pointer-events-none">
-              <img src="./icons/ep_arrow-up-bold.svg" alt="arrow" className="w-[20px] h-[20px]" />
+              <img src="/icons/ep_arrow-up-bold.svg" alt="arrow" className="w-[20px] h-[20px]" />
             </span>
             <div className="h-[20px]">
               {errors.field && <p className="text-red-500 text-sm">{errors.field.message}</p>}

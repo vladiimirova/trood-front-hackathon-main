@@ -1,11 +1,14 @@
+import useStore from '../../../../Store/Store';
+
 function ProjectCard({ project }) {
+  const field = useStore((state) => state.savedFields[project.id]);
   return (
     <div className="bg-white w-[508px]  rounded-[24px] pt-[32px] pl-[34px] pb-[17px] font-aeroport">
       <p className="font-500 text-[24px] mb-[23px] mr-[94px]">{project.name}</p>
       <div className="font-400 text-[16px] flex flex-col gap-[15px]">
         <div className="flex gap-[15px]">
           <div className="w-[4px] h-[25px] bg-[#E8EBEA]"></div>
-          <p>{project.description}</p>
+          <p>Description: {project.description}</p>
         </div>
         <div className="flex gap-[15px]">
           <div className="w-[4px] h-[25px] bg-[#E8EBEA]"></div>
@@ -13,7 +16,7 @@ function ProjectCard({ project }) {
         </div>
         <div className="flex gap-[15px]">
           <div className="w-[4px] h-[25px] bg-[#E8EBEA]"></div>
-          <p>Field: {project.field}</p>
+          <p>Field: {field ? field : 'Not specified'}</p>
         </div>
         <div className="flex gap-[15px]">
           <div className="w-[4px] h-[25px] bg-[#E8EBEA]"></div>

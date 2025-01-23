@@ -5,21 +5,24 @@ import BtnTemp from '../../UI/BtnTemp/BtnTemp';
 import { schemaCreate } from '../CreateProjects/CreateComp/CreateValidation';
 
 function ReadyProject() {
-  const { projectId } = useParams();
+  const { projectId } = useParams(); 
+
   const project = useStore(
     (state) =>
       state.activeProjects.find((p) => p.id === parseInt(projectId)) ||
       state.completedProjects.find((p) => p.id === parseInt(projectId))
   );
+
   const updateProject = useStore((state) => state.updateProject);
   const { removeProject } = useStore();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    field: '',
-    experience: '',
-    deadline: '',
+    id: projectId, 
+    name: '',
     description: '',
+    deadline: '',
+    experience: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -28,22 +31,33 @@ function ReadyProject() {
     if (!project) {
       navigate('/');
     } else {
-      setFormData({
-        field: project.field || '',
-        experience: project.experience || '',
-        deadline: project.deadline || '',
-        description: project.description || '',
+      setFormData((prevFormData) => {
+        const fieldValue = localStorage.getItem(`field-${project.id}`) || project.field; 
+        return {
+          id: project.id || projectId,
+          name: project.name || '',
+          experience: project.experience || '',
+          deadline: project.deadline || '',
+          description: project.description || '',
+          field: fieldValue, 
+        };
       });
     }
-  }, [project, navigate]);
+  }, [project, navigate, projectId]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     const updatedFormData = { ...formData, [name]: value };
+  
     setFormData(updatedFormData);
 
+    if (name === "field") {
+      localStorage.setItem(`field-${projectId}`, value);
+    }
+  
     const validationResult = schemaCreate.safeParse(updatedFormData);
-
+  
     if (!validationResult.success) {
       const newErrors = {};
       validationResult.error.errors.forEach((err) => {
@@ -51,45 +65,21 @@ function ReadyProject() {
       });
       setErrors(newErrors);
     } else {
-      setErrors({}); 
+      setErrors({});
+  
+      const updatedProject = {
+        ...project,
+        ...updatedFormData,
+        id: parseInt(projectId, 10),
+      };
+      updateProject(updatedProject);
     }
-
-    updateProject({ ...project, ...updatedFormData });
-    localStorage.setItem(
-      'activeProjects',
-      JSON.stringify(useStore.getState().activeProjects)
-    );
-    localStorage.setItem(
-      'completedProjects',
-      JSON.stringify(useStore.getState().completedProjects)
-    );
   };
+  
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const validationResult = schemaCreate.safeParse(formData);
-
-    if (!validationResult.success) {
-      const newErrors = {};
-      validationResult.error.errors.forEach((err) => {
-        newErrors[err.path[0]] = err.message;
-      });
-      setErrors(newErrors);
-      return;
-    }
-
-    updateProject({ ...project, ...formData });
-    localStorage.setItem(
-      'activeProjects',
-      JSON.stringify(useStore.getState().activeProjects)
-    );
-    localStorage.setItem(
-      'completedProjects',
-      JSON.stringify(useStore.getState().completedProjects)
-    );
-    navigate('/');
-  };
+  if (!project) {
+    return <div>Loading...</div>;
+  }
 
   const handleDelete = () => {
     removeProject(project.id);
@@ -107,10 +97,7 @@ function ReadyProject() {
         <BtnTemp text={'Delete'} onClick={handleDelete} />
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-t-[24px] pt-[55px] pb-[215px] pr-[77px] pl-[59px] font-400 text-[18px]"
-      >
+      <form className="bg-white rounded-t-[24px] pt-[55px] pb-[215px] pr-[77px] pl-[59px] font-400 text-[18px]">
         <div className="flex justify-between mb-[4px]">
           <div className="relative">
             <label htmlFor="field" className="mb-[10px] block">
@@ -128,9 +115,9 @@ function ReadyProject() {
               <option value="Development">Development</option>
               <option value="Marketing">Marketing</option>
             </select>
-            <span className="absolute right-[15px] top-[55px] transform -translate-y-1/2 pointer-events-none">
+            <span className="absolute right-[15px] top-[65px] transform -translate-y-1/2 pointer-events-none">
               <img
-                src="./icons/ep_arrow-up-bold.svg"
+                src="/icons/ep_arrow-up-bold.svg"
                 alt="arrow"
                 className="w-[20px] h-[20px]"
               />
@@ -166,7 +153,7 @@ function ReadyProject() {
             <input
               id="deadline"
               name="deadline"
-              type="date" 
+              type="date"
               value={formData.deadline}
               onChange={handleChange}
               className="p-2 rounded-[8px] border-2 border-solid border-gray-border block w-[285px] h-[61px]"
