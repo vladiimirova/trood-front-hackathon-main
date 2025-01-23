@@ -52,7 +52,7 @@ function Dashboard() {
         )}
       </div>
 
-      <div className="mt-[40px]">
+      <div className="mt-[40px] mb-[150px]">
         <h1 className="font-aeroport font-500 text-[32px] mb-[32px]">Passed projects</h1>
         <div className="flex flex-wrap gap-[30px] justify-between">
           {completedProjects.length === 0 ? (

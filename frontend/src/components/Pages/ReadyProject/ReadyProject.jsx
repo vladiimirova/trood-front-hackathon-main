@@ -39,7 +39,30 @@ function ReadyProject() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const updatedFormData = { ...formData, [name]: value };
+    setFormData(updatedFormData);
+
+    const validationResult = schemaCreate.safeParse(updatedFormData);
+
+    if (!validationResult.success) {
+      const newErrors = {};
+      validationResult.error.errors.forEach((err) => {
+        newErrors[err.path[0]] = err.message;
+      });
+      setErrors(newErrors);
+    } else {
+      setErrors({}); 
+    }
+
+    updateProject({ ...project, ...updatedFormData });
+    localStorage.setItem(
+      'activeProjects',
+      JSON.stringify(useStore.getState().activeProjects)
+    );
+    localStorage.setItem(
+      'completedProjects',
+      JSON.stringify(useStore.getState().completedProjects)
+    );
   };
 
   const handleSubmit = (e) => {
@@ -143,7 +166,7 @@ function ReadyProject() {
             <input
               id="deadline"
               name="deadline"
-              type="text"
+              type="date" 
               value={formData.deadline}
               onChange={handleChange}
               className="p-2 rounded-[8px] border-2 border-solid border-gray-border block w-[285px] h-[61px]"
