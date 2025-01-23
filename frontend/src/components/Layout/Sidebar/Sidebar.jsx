@@ -6,7 +6,7 @@ function Sidebar() {
 <div className="pl-[57px] pr-[34px] font-aeroport font-400 text-[14px]">
           <ul className=''>
             <li className='pt-[15.5px] pb-[15.5px] pl-[19px] w-[200px]'>Main page</li>
-            <li className='pt-[15.5px] pb-[15.5px] pl-[19px] w-[200px]'> <Link  to="/" className="" > Projects</Link></li>
+            <li className='pt-[15.5px] pb-[15.5px] pl-[19px] w-[200px] bg-[#C2C5CB] text-white rounded-[12px]'> <Link  to="/" className="" > Projects</Link></li>
             <li className='pt-[15.5px] pb-[15.5px] pl-[19px] w-[200px]'>Vacancies</li>
             <li className='pt-[15.5px] pb-[15.5px] pl-[19px] w-[200px]'>People</li>
             <li className='pt-[15.5px] pb-[15.5px] pl-[19px] w-[200px]'>Tests</li>
